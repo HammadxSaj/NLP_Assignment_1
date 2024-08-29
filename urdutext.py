@@ -1,7 +1,5 @@
-
-import urduhack
-urduhack.download()
-# from urduhack import tokenize
+import nltk
+import re
 
 
 def read_urdu_text(file_path):
@@ -10,13 +8,13 @@ def read_urdu_text(file_path):
     return text
 
 
+
 def tokenize_urdu_text(text):
-    urduhack.initialize()  # Initialize UrduHack
-    from urduhack.tokenization import tokenize
-    tokens = tokenize(text)
-    # Extracting words from the tokenized output
-    word_tokens = [word.text for word in tokens.words]
-    return word_tokens
+    # Regular expression pattern for Urdu words
+    urdu_word_pattern = r'\b[\u0600-\u06FF]+\b'
+
+    tokens = re.findall(urdu_word_pattern, text)
+    return tokens
 
 
 def write_tokens_to_file(tokens, output_file_path):
@@ -24,7 +22,10 @@ def write_tokens_to_file(tokens, output_file_path):
         for token in tokens:
             file.write(token + '\n')
 
+
 if __name__ == "__main__":
+    nltk.download('punkt')
+
     # Define file paths
     input_file_path = "urdu_text_input.txt"
     output_file_path = "urdu_tokens_output.txt"
