@@ -1,1 +1,1 @@
-print(text)
+from urduhack import tokenize
