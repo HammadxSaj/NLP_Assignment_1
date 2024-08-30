@@ -1,4 +1,3 @@
-import nltk
 import re
 
 
@@ -24,7 +23,6 @@ def write_tokens_to_file(tokens, output_file_path):
 
 
 if __name__ == "__main__":
-    nltk.download('punkt')
 
     # Define file paths
     input_file_path = "urdu_text_input.txt"
