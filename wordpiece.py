@@ -1,41 +1,51 @@
 import re
 from collections import defaultdict
 
-
 def read_file(file_path):
     with open(file_path, 'r', encoding='utf-8') as file:
         text = file.read().lower()
-    # Clean the text by removing non-alphabetic characters
+    # preprocessing
     text = re.sub(r'[^a-z\s]', '', text)
     return text
 
-
+#tokenizing text into individiual chars.
 def tokenize_text(text):
     words = text.split()
-    # Each word becomes a list of characters
-    tokens = [list(word) for word in words]
+    # the line below converts each word into characters. Except first character, rest have ## added.
+    tokens = {word: [c if i == 0 else f"##{c}" for i, c in enumerate(word)] for word in words}
+    #print(tokens)
     return tokens
 
-
-def get_pair_frequencies(tokens):
+#getting frequencies of sidebyside chars
+def get_pair_frequencies(tokens, word_freqs):
     pair_freq = defaultdict(int)
     token_freq = defaultdict(int)
+    #print(tokens)
 
-    for token_list in tokens:
-        # Count frequency of each token
-        for token in token_list:
-            token_freq[token] += 1
+    for word, split in tokens.items():
+        freq = word_freqs[word]
+        #print(freq)
+        #print(split)
 
-        # Count frequency of each pair of adjacent tokens
-        for i in range(len(token_list) - 1):
-            pair = (token_list[i], token_list[i + 1])
-            pair_freq[pair] += 1
-    # print(token_freq)
-    # print("THIS IS SEPERATION")
+        if len(split) == 1:
+            token_freq[split[0]] += freq
+            continue
+
+        #making pairs of the adjacent characters' freq
+        for i in range(len(split) - 1):
+            pair = (split[i], split[i + 1])
+            token_freq[split[i]] += freq
+            pair_freq[pair] += freq
+
+        token_freq[split[-1]] += freq
+
     # print(pair_freq)
+    # print("split here")
+    # print(token_freq)
+
     return pair_freq, token_freq
 
-
+#Calc pair freqs based on the formula provided.
 def calculate_pair_scores(pair_freq, token_freq):
     pair_scores = {}
     for (first, second), freq_pair in pair_freq.items():
@@ -43,63 +53,71 @@ def calculate_pair_scores(pair_freq, token_freq):
         pair_scores[(first, second)] = score
     return pair_scores
 
+# ,erging high freq tokens
+def merge_pair(tokens, best_pair, word_freqs):
+    a, b = best_pair
+    merged_tokens = {}
 
-def merge_pair(tokens, pair_to_merge):
-    merged_tokens = []
-    first, second = pair_to_merge
-    pair_str = first + second
+    for word, split in tokens.items():
+        freq = word_freqs[word]
 
-    for token_list in tokens:
-        merged_token_list = []
-        skip_next = False
-        for i in range(len(token_list)):
-            if skip_next:
-                skip_next = False
-                continue
+        if len(split) == 1:
+            merged_tokens[word] = split
+            continue
 
-            if i < len(token_list) - 1 and token_list[i] == first and token_list[i + 1] == second:
-                merged_token_list.append(pair_str)
-                skip_next = True
+        i = 0
+        while i < len(split) - 1:
+            if split[i] == a and split[i + 1] == b:
+                merge = a + b[2:] if b.startswith("##") else a + b
+                split = split[:i] + [merge] + split[i + 2:]
             else:
-                merged_token_list.append(token_list[i])
+                i += 1
 
-        merged_tokens.append(merged_token_list)
+        merged_tokens[word] = split
 
-    #print(merged_tokens)
     return merged_tokens
 
-def word_piece_algorithm(file_path, num_merges=10):
-    # Read and preprocess the text
+#Main algorithm function
+def word_piece_algorithm(file_path, vocab_size=70):
+    # Read text
     text = read_file(file_path)
+    #print(text)
 
+    # pre-tokenizing into words and counting the freq of words
+    word_freqs = defaultdict(int)
+    for word in text.split():
+        word_freqs[word] += 1
+    #print(word_freqs)
+
+    #splitting into individual tokens
     tokens = tokenize_text(text)
+    
+    merges = [] 
 
-    #print(tokens)
-
-    merged_pairs = []
-
-    for _ in range(num_merges):
-
-        pair_freq, token_freq = get_pair_frequencies(tokens)
-
+    # for first 10 merges
+    while len(merges) < 10:
+        # Getting pair and token frequencies
+        pair_freq, token_freq = get_pair_frequencies(tokens, word_freqs)
+        #get pair scores based on provided formula
         pair_scores = calculate_pair_scores(pair_freq, token_freq)
 
+        # simple max func to find highest pair score
         best_pair = max(pair_scores, key=pair_scores.get)
 
-        # Append the pair to the merged pairs list
-        merged_pairs.append(best_pair)
+        merges.append(best_pair)
 
-        # Merge the best pair in tokens
-        tokens = merge_pair(tokens, best_pair)
+        #merging hghihest freq tokens
+        tokens = merge_pair(tokens, best_pair, word_freqs)
 
-    #print("pairscores:", pair_scores)
-    return merged_pairs
-
+    return merges
 
 if __name__ == "__main__":
-    # Specify the file path to your text file here
     file_path = "wordpiece_input.txt"
+
+    # calling wordpiece algo.
     first_10_merged_pairs = word_piece_algorithm(file_path)
+
+    # first 10 pairs
     print("First 10 pairs merged by the algorithm:")
     for pair in first_10_merged_pairs:
         print(pair)
