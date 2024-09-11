@@ -3,9 +3,8 @@ from collections import defaultdict
 
 def read_file(file_path):
     with open(file_path, 'r', encoding='utf-8') as file:
-        text = file.read().lower()
-    # preprocessing
-    text = re.sub(r'[^a-z\s]', '', text)
+        text = file.read()
+    #print(text)
     return text
 
 #tokenizing text into individiual chars.

@@ -2,4 +2,8 @@
 12/05/2023 - DD/MM/YYYY - Context: The conference will be held on 05/12/2023, and the registration deadline is 12/05/2023.
 03/08/2024 - DD/MM/YYYY - Context: Another event is scheduled for 03/08/2024, and the final report is due on 08/03/2024.
 08/03/2024 - DD/MM/YYYY - Context: Another event is scheduled for 03/08/2024, and the final report is due on 08/03/2024.
-05/06/2023 - MM/DD/YYYY - Context: For example, 05/06/2023 could be either 5th June 2023 or 6th May 2023.
+05/06/2023 - Ambiguous - Context: For example, 05/06/2023 could be either 5th June 2023 or 6th May 2023.
+13/05/2023 - DD/MM/YYYY - Context: 13/05/2023
+10/10/2022 - Ambiguous - Context: 10/10/2022
+09/08/2024 - MM/DD/YYYY - Context: rumor (American spelling) is that the date is 09/08/2024
+02/03/2022 - DD/MM/YYYY - Context: labour (British spelling) day is on 02/03/2022
