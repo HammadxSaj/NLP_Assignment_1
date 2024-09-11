@@ -26,7 +26,7 @@ if __name__ == "__main__":
 
     # Define file paths
     input_file_path = "urdu_text_input.txt"
-    output_file_path = "urdu_tokens_output.txt"
+    output_file_path = "urdu_tokens_output_re.txt"
 
     urdu_text = read_urdu_text(input_file_path)
 
