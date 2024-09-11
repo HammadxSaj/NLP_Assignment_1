@@ -77,7 +77,7 @@ def merge_pair(tokens, best_pair, word_freqs):
     return merged_tokens
 
 #Main algorithm function
-def word_piece_algorithm(file_path, vocab_size=70):
+def word_piece_algorithm(file_path):
     # Read text
     text = read_file(file_path)
     #print(text)
