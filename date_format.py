@@ -37,6 +37,7 @@ def extract_dates(text):
 def determine_format(day, month, context):
 
     #checking mention of any month for generalised test cases.
+    contextualwords = ["held on", "registration deadline", "scheduled for", "due on"]
     month_names = ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"]
     british_words = ['colour', 'flavour', 'labour', 'neighbour', 'rumour']
     american_words = ['color', 'flavor', 'labor', 'neighbor', 'rumor']
@@ -50,7 +51,7 @@ def determine_format(day, month, context):
         context = context.lower()
         
         #contextual words based on test cases
-        if "held on" in context or "registration deadline" in context or "scheduled for" in context or "due on" in context:
+        if any(contextualwords in context for contextualwords in contextualwords):
             if day <= 12 and month <= 12:
                 return 'DD/MM/YYYY'
             
